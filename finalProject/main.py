@@ -9,7 +9,7 @@ import requests
 import pytz
 
 root = Tk()
-root.title("WEATHER_FOR_YOU")
+root.title("WEATHERAPP☁️byGeorge")
 root.geometry("900x500+300+200")
 root.resizable(False, False)
 
@@ -57,6 +57,10 @@ def get_weather():
     p.config(text=pressure)
 
 
+image_icon = PhotoImage(file="logo2.png")
+root.iconphoto(False, image_icon)
+
+
 # search
 search_image = PhotoImage(file="search.png")
 myimage = Label(image=search_image)
@@ -71,7 +75,7 @@ myimage_icon = Button(image=search_icon, borderwidth=0, cursor="hand2", bg="#404
 myimage_icon.place(x=400, y=34)
 
 # Logo
-logo_image = PhotoImage(file="Logo.png")
+logo_image = PhotoImage(file="logo2.png")
 logo = Label(image=logo_image)
 logo.place(x=150, y=100)
 
@@ -81,7 +85,7 @@ Frame_image = Label(image=Frame_box)
 Frame_image.pack(padx=5, pady=5, side=BOTTOM)
 
 # time
-name = Label(root, font=("arial", 15, "bold"))
+name = Label(root, font=("arial", 15, "bold", "italic"))
 name.place(x=30, y=100)
 clock = Label(root, font=("Helvetica", 20))
 clock.place(x=30, y=130)
@@ -100,7 +104,7 @@ label3.place(x=430, y=400)
 label4 = Label(root, text="PRESSURE(hPa)", font=("Helvetica", 15, 'bold'), fg="white", bg="#1ab5ef")
 label4.place(x=650, y=400)
 
-t = Label(font=('arial', 70, "bold"), fg="#ee666d")
+t = Label(font=('poppins', 70, "bold"), fg="#ee666d")
 t.place(x=400, y=150)
 c = Label(font=('arial', 15, "bold"))
 c.place(x=400, y=250)
