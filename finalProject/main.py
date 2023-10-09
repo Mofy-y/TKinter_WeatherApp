@@ -21,14 +21,22 @@ def get_weather():
         messagebox.showerror("Error", "Please enter a city")
         return
 
-    geolocator = Nominatim(user_agent="MyGeocoder/1.0")
     try:
-        location = geolocator.geocode(city)
-    except GeocoderTimedOut:
-        location = geolocator.geocode(city, timeout=None)
+        geolocator = Nominatim(user_agent="MyGeocoder/1.0")
+        location = geolocator.geocode(city, timeout=10)  # Increase the timeout to 10 seconds
+        if location is None:
+            messagebox.showerror("Error", "Location not found")
+            return
+    except GeocoderTimedOut as e:
+        messagebox.showerror("Error", f"Geocoding error: {e}")
+        return
 
-    obj = TimezoneFinder()
-    result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
+    try:
+        obj = TimezoneFinder()
+        result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
+    except AttributeError:
+        messagebox.showerror("Error", "Location data incomplete")
+        return
 
     home = pytz.timezone(result)
     local_time = datetime.now(home)
@@ -39,24 +47,35 @@ def get_weather():
     # weather
     api = "http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=287f49ee6d240066dd63202f2da8bfe0"
 
-
     json_data = requests.get(api).json()
-    condition = json_data['weather'][0]['main']
-    description = json_data['weather'][0]['description']
-    temp = int(json_data['main']['temp']-273.15)
+
+    # Print the JSON data to help identify the structure
+    print(json_data)
+
+    # Check if 'weather' key exists in the JSON response
+    if 'weather' in json_data:
+        # Check if 'description' key exists within the 'weather' object
+        if len(json_data['weather']) > 0 and 'description' in json_data['weather'][0]:
+            description = json_data['weather'][0]['description']
+        else:
+            description = "N/A"
+    else:
+        messagebox.showerror("Error", "Weather data not found")
+        return
+
+    # Continue with the rest of your code
+    temp = int(json_data['main']['temp'] - 273.15)
     pressure = json_data['main']['pressure']
     humidity = json_data['main']['humidity']
     wind = json_data['wind']['speed']
 
     t.config(text=(temp, "°"))
-    c.config(text=(condition, "|", "FEELS", "LIKE", temp, "°"))
+    c.config(text=("N/A", "|", "FEELS", "LIKE", temp, "°"))  # You can set condition to "N/A" in case it's missing
 
     w.config(text=wind)
     h.config(text=humidity)
     d.config(text=description)
     p.config(text=pressure)
-
-
 image_icon = PhotoImage(file="logo2.png")
 root.iconphoto(False, image_icon)
 
